@@ -59,17 +59,18 @@ const newArr = (size) => {
 	for (let i = 0; i < size; i++) {
 		arr[i] = [];
 		for (let j = 0; j < size; j++) {
-			arr[i][j] =
-				i === j || i === size - j - 1
-					? 2
-					: 0 || (i < j && i < size - j - 1)
-					? 1
-					: 0 || (i > j && i > size - j - 1)
-					? 1
-					: 0;
+			if (i === j || i === size - j - 1) {
+				arr[i][j] = 2;
+			} else if (
+				(i < j && i < size - j - 1) ||
+				(i > j && i > size - j - 1)
+			) {
+				arr[i][j] = 1;
+			} else {
+				arr[i][j] = 0;
+			}
 		}
 	}
-
 	return arr;
 };
 console.log(newArr(5));
@@ -77,23 +78,19 @@ console.log(newArr(5));
 // 4. Create a similar element, when you click on any of the blocks it should change
 // own color
 
-const table = document.getElementById('testTable');
+const rootTable = document.getElementById('root');
+let selectedElement;
 
-let element;
-let elementId;
-
-table.onmouseover = function getCurrentElement(e) {
-	element = e.target;
-	elementId = e.target.id;
-};
 document.addEventListener('click', function changeColor(e) {
-	if (e.target === element) {
-		e.target.style.backgroundColor = 'aqua';
-		console.log(element);
-	}
+	const { target: elem } = e;
+	if (!rootTable.contains(elem)) return;
+	highlight(elem);
 });
 
-table.onmouseout = function removeCurrentElement(e) {
-	const el = document.getElementById(elementId);
-	console.log(el);
-};
+function highlight(element) {
+	if (selectedElement) {
+		selectedElement.classList.remove('highlight');
+	}
+	selectedElement = element;
+	selectedElement.classList.add('highlight');
+}
